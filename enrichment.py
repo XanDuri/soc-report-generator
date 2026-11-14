@@ -8,27 +8,29 @@ Wzbogaca przetworzone alerty o dodatkowy kontekst:
 
 import json
 import ipaddress
+from mitreattack.stix20 import MitreAttackData
 
-def load_mitre_map(filepath="mitre_map.json"):
-    """Wczytuje baze mapowania technik MITRE."""
-    with open(filepath, "r", encoding="utf-8") as f:
-        return json.load(f)
+def load_attack(filepath="data/enterprise-attack.json"):
+    """Wczytuje baze MITRE ATT&CK i slownik nazw taktyk."""
+    attack = MitreAttackData(filepath)
+    tactic_names = {tac.x_mitre_shortname: tac.name for tac in attack.get_tactics()}
+    return attack, tactic_names
 
 
-def enrich_mitre(alerts, mitre_map):
-    """
-    Zbiera wszystkie unikalne techniki MITRE z alertow
-    i dolacza ich czytelne nazwy + taktyki.
-    """
+def enrich_mitre(alerts, attack, tactic_names):
     techniques = {}
     for alert in alerts:
         for code in alert.get("mitre", []):
-            if code not in techniques:
-                info = mitre_map.get(code, {"name": "Unknown technique", "tactic": "Unknown"})
-                techniques[code] = info
-    # zwracamy posortowana liste slownikow
+            if code in techniques:
+                continue
+            obj = attack.get_object_by_attack_id(code, "attack-pattern")
+            if obj is None:
+                techniques[code] = {"name": "Unknown technique", "tactics": []}
+                continue
+            tactics = [tactic_names[p.phase_name] for p in obj.kill_chain_phases]
+            techniques[code] = {"name": obj.name, "tactics": tactics}
     return [
-        {"code": code, "name": info["name"], "tactic": info["tactic"]}
+        {"code": code, "name": info["name"], "tactics": info["tactics"]}
         for code, info in sorted(techniques.items())
     ]
 
@@ -103,11 +105,11 @@ if __name__ == "__main__":
     from parser import parse
 
     alerts = parse("sample_alerts/alerts.json")
-    mitre_map = load_mitre_map()
 
     print("=== MITRE techniki ===")
-    for t in enrich_mitre(alerts, mitre_map):
-        print(f"  {t['code']} - {t['name']} ({t['tactic']})")
+    attack, tactic_names = load_attack()
+    for t in enrich_mitre(alerts, attack, tactic_names):
+        print(f"  {t['code']} - {t['name']} ({', '.join(t['tactics'])})")
 
     print("\n=== IOC ===")
     for typ, values in extract_iocs(alerts).items():

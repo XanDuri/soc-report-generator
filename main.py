@@ -13,7 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from parser import parse
 from enrichment import (
-    load_mitre_map,
+    load_attack,
     enrich_mitre,
     extract_iocs,
     assess_severity,
@@ -26,10 +26,17 @@ from enrichment import (
 RECOMMENDATION_RULES = {
     "Initial Access": "Isolate the affected host and review the delivery vector (email/attachment).",
     "Execution": "Terminate malicious processes and collect the full command line for analysis.",
-    "Command and Control": "Block the identified C2 domain/IP at the firewall and proxy.",
     "Persistence": "Remove the persistence mechanism (scheduled task/registry) and verify it does not recreate.",
+    "Privilege Escalation": "Review accounts and services running with elevated privileges and check for newly created admin accounts (events 4720, 4732).",
+    "Stealth": "Check for cleared event logs (Event ID 1102), hidden files/directories, and unauthorized modifications to system binaries or timestamps.",
+    "Defense Impairment": "Verify the status of security services (AV/EDR), check for disabled firewall rules or tampering, including added AV exclusions, document how controls were disabled, then re-enable them.",
     "Credential Access": "Force password reset for affected accounts and review authentication logs.",
+    "Discovery": "Analyze process execution history for reconnaissance commands (e.g., net, ipconfig, whoami) and correlate with other activity from the same host or user to determine attacker intent.",
+    "Lateral Movement": "Check authentication logs (Event ID 4624 type 3/10) and new service installations (Event ID 7045) for abnormal remote logins via SMB, RDP, or WinRM, and segment the network if needed.",
+    "Collection": "Inspect temp directories for staged archives (zip, rar, tar) and monitor unauthorized access to sensitive file shares or databases.",
+    "Command and Control": "Block the identified C2 domain/IP at the firewall and proxy.",
     "Exfiltration": "Assess what data may have been exfiltrated and notify relevant stakeholders.",
+    "Impact": "Isolate systems immediately to halt data destruction or ransomware encryption, verify backup integrity, and identify affected services.",
 }
 
 DEFAULT_RECOMMENDATIONS = [
@@ -40,7 +47,7 @@ DEFAULT_RECOMMENDATIONS = [
 
 def build_recommendations(techniques):
     """Buduje liste rekomendacji na podstawie wykrytych taktyk."""
-    tactics = {t["tactic"] for t in techniques}
+    tactics = {tac for t in techniques for tac in t["tactics"]}
     recs = [RECOMMENDATION_RULES[t] for t in RECOMMENDATION_RULES if t in tactics]
     return recs + DEFAULT_RECOMMENDATIONS
 
@@ -54,14 +61,14 @@ def generate_report(input_file, output_file, analyst):
         return
 
     # 2. Wzbogac dane
-    mitre_map = load_mitre_map()
-    techniques = enrich_mitre(alerts, mitre_map)
+    attack, tactic_names = load_attack()
+    techniques = enrich_mitre(alerts, attack, tactic_names)
     iocs = extract_iocs(alerts)
     severity_rating, severity_level = assess_severity(alerts)
     systems = get_affected_systems(alerts)
 
     # 3. Zbuduj kontekst dla szablonu
-    tactics = sorted({t["tactic"] for t in techniques})
+    tactics = sorted({tac for t in techniques for tac in t["tactics"]})
     context = {
         "report_id": "IR-" + datetime.now().strftime("%Y%m%d-%H%M%S"),
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),

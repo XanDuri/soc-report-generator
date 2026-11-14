@@ -62,7 +62,7 @@ Immediate review and containment are recommended.
 | Technique | Name | Tactic |
 |-----------|------|--------|
 {% for t in techniques -%}
-| {{ t.code }} | {{ t.name }} | {{ t.tactic }} |
+| {{ t.code }} | {{ t.name }} | {{ t.tactics | join(", ") }} |
 {% endfor %}
 
 ---
