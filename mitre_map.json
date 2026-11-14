@@ -1,0 +1,13 @@
+{
+  "T1566.001": {"name": "Spearphishing Attachment", "tactic": "Initial Access"},
+  "T1204.002": {"name": "User Execution: Malicious File", "tactic": "Execution"},
+  "T1059.001": {"name": "PowerShell", "tactic": "Execution"},
+  "T1071.001": {"name": "Application Layer Protocol: Web", "tactic": "Command and Control"},
+  "T1053.005": {"name": "Scheduled Task", "tactic": "Persistence"},
+  "T1110": {"name": "Brute Force", "tactic": "Credential Access"},
+  "T1105": {"name": "Ingress Tool Transfer", "tactic": "Command and Control"},
+  "T1547": {"name": "Boot or Logon Autostart Execution", "tactic": "Persistence"},
+  "T1048.003": {"name": "Exfiltration Over Unencrypted Protocol", "tactic": "Exfiltration"},
+  "T1003": {"name": "OS Credential Dumping", "tactic": "Credential Access"},
+  "T1003.001": {"name": "OS Credential Dumping: LSASS Memory", "tactic": "Credential Access"}
+}

@@ -1,0 +1,95 @@
+[
+  {
+    "alert_id": "A-1001",
+    "timestamp": "2026-09-14T08:12:03Z",
+    "rule": {
+      "level": 12,
+      "description": "Suspicious email attachment opened by user",
+      "mitre": ["T1566.001"]
+    },
+    "agent": {
+      "name": "WKSTN-0051",
+      "ip": "10.10.155.159"
+    },
+    "data": {
+      "user": "evan.hutchinson",
+      "process": "WINWORD.EXE",
+      "file": "Invoice_Q3.docm"
+    }
+  },
+  {
+    "alert_id": "A-1002",
+    "timestamp": "2026-09-14T08:12:47Z",
+    "rule": {
+      "level": 14,
+      "description": "PowerShell spawned by Office application (suspicious parent)",
+      "mitre": ["T1059.001", "T1204.002"]
+    },
+    "agent": {
+      "name": "WKSTN-0051",
+      "ip": "10.10.155.159"
+    },
+    "data": {
+      "user": "evan.hutchinson",
+      "process": "powershell.exe",
+      "parent_process": "WINWORD.EXE",
+      "command_line": "powershell.exe -enc aQBlAHgAIAAoAG4AZQB3AC0AbwBiAGoA..."
+    }
+  },
+  {
+    "alert_id": "A-1003",
+    "timestamp": "2026-09-14T08:13:15Z",
+    "rule": {
+      "level": 13,
+      "description": "Outbound connection to known malicious domain",
+      "mitre": ["T1071.001"]
+    },
+    "agent": {
+      "name": "WKSTN-0051",
+      "ip": "10.10.155.159"
+    },
+    "data": {
+      "user": "evan.hutchinson",
+      "process": "powershell.exe",
+      "destination_domain": "files.bpakcaging.xyz",
+      "destination_ip": "165.232.170.151",
+      "destination_port": "80"
+    }
+  },
+  {
+    "alert_id": "A-1004",
+    "timestamp": "2026-09-14T08:15:32Z",
+    "rule": {
+      "level": 15,
+      "description": "Scheduled task created for persistence",
+      "mitre": ["T1053.005"]
+    },
+    "agent": {
+      "name": "WKSTN-0051",
+      "ip": "10.10.155.159"
+    },
+    "data": {
+      "user": "evan.hutchinson",
+      "process": "schtasks.exe",
+      "command_line": "schtasks /Create /F /SC DAILY /ST 09:00 /TN Updater"
+    }
+  },
+  {
+    "alert_id": "A-1005",
+    "timestamp": "2026-09-14T08:18:04Z",
+    "rule": {
+      "level": 10,
+      "description": "Multiple failed login attempts",
+      "mitre": ["T1110"]
+    },
+    "agent": {
+      "name": "SRV-DC01",
+      "ip": "10.10.155.10"
+    },
+    "data": {
+      "user": "administrator",
+      "source_ip": "10.10.155.159",
+      "failed_attempts": "8"
+    }
+  }
+]
