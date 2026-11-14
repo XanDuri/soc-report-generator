@@ -6,6 +6,7 @@ Uzycie:
     python3 main.py --input sample_alerts/alerts.json --output output/report.md --analyst "Lukasz M."
 """
 
+import os
 import argparse
 from datetime import datetime, timezone
 from jinja2 import Environment, FileSystemLoader
@@ -83,6 +84,9 @@ def generate_report(input_file, output_file, analyst):
     report = template.render(context)
 
     # 5. Zapisz raport
+    folder = os.path.dirname(output_file)
+    if folder:
+        os.makedirs(folder, exist_ok=True)
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(report)
 
