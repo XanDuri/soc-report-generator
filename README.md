@@ -166,7 +166,87 @@ Generated from `sample_alerts/alerts.json` (5 alerts, a phishing → PowerShell 
 <details>
 <summary><b>Show the full generated report</b></summary>
 
-(wklej tutaj cały raport)
+# 🛡️ Security Incident Report
+
+**Report ID:** IR-20261117-073153
+**Generated:** 2026-11-17 06:31 UTC
+**Severity:** Critical (max alert level 15/15)
+**Analyst:** Unassigned
+
+---
+
+## 1. Executive Summary
+
+An incident involving **5 correlated alerts** was detected across
+**2 system(s)**. The activity has been classified as
+**Critical** severity. The observed behavior is consistent with a
+multi-stage attack spanning the following MITRE ATT&CK tactics:
+Command and Control, Credential Access, Execution, Initial Access, Persistence, Privilege Escalation.
+
+Immediate review and containment are recommended.
+
+---
+
+## 2. Timeline of Events
+
+| Time | Host | Lvl | Description |
+|------|------|-----|-------------|
+| 2026-09-14T08:12:03Z | WKSTN-0051 | 12 | Suspicious email attachment opened by user |
+| 2026-09-14T08:12:47Z | WKSTN-0051 | 14 | PowerShell spawned by Office application (suspicious parent) |
+| 2026-09-14T08:13:15Z | WKSTN-0051 | 13 | Outbound connection to known malicious domain |
+| 2026-09-14T08:15:32Z | WKSTN-0051 | 15 | Scheduled task created for persistence |
+| 2026-09-14T08:18:04Z | SRV-DC01 | 10 | Multiple failed login attempts |
+
+---
+
+## 3. Affected Systems
+
+- **WKSTN-0051** (10.10.155.159) — user(s): evan.hutchinson
+- **SRV-DC01** (10.10.155.10) — user(s): administrator
+
+---
+
+## 4. Indicators of Compromise (IOCs)
+
+**IP Addresses:**
+- `165.232.170.151`
+
+**Domains:**
+- `files.bpakcaging.xyz`
+
+**Files:**
+- `Invoice_Q3.docm`
+
+
+---
+
+## 5. MITRE ATT&CK Mapping
+
+| Technique | Name | Tactic |
+|-----------|------|--------|
+| T1053.005 | Scheduled Task | Execution, Persistence, Privilege Escalation |
+| T1059.001 | PowerShell | Execution |
+| T1071.001 | Web Protocols | Command and Control |
+| T1110 | Brute Force | Credential Access |
+| T1204.002 | Malicious File | Execution |
+| T1566.001 | Spearphishing Attachment | Initial Access |
+
+---
+
+## 6. Recommendations
+
+- Isolate the affected host and review the delivery vector (email/attachment).
+- Terminate malicious processes and collect the full command line for analysis.
+- Remove the persistence mechanism (scheduled task/registry) and verify it does not recreate.
+- Review accounts and services running with elevated privileges and check for newly created admin accounts (events 4720, 4732).
+- Force password reset for affected accounts and review authentication logs.
+- Block the identified C2 domain/IP at the firewall and proxy.
+- Preserve evidence (memory, logs) before remediation for potential forensic analysis.
+- Document all response actions in the incident tracking system.
+
+---
+
+*This report was generated automatically by the SOC Report Generator.*
 
 </details>
  
