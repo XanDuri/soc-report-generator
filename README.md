@@ -139,7 +139,36 @@ Any key in `data` containing `ip`, `domain`, `file` or `hash`/`md5`/`sha` is pic
  
 ## Example output
  
-<!-- TODO: paste a short real excerpt of output/report.md here (e.g. the summary, the MITRE table and recommendations) -->
+Generated from `sample_alerts/alerts.json` (5 alerts, a phishing → PowerShell → C2 → persistence chain):
+
+**MITRE ATT&CK mapping** — one technique can map to several tactics:
+
+| Technique | Name | Tactic |
+|-----------|------|--------|
+| T1053.005 | Scheduled Task | Execution, Persistence, Privilege Escalation |
+| T1059.001 | PowerShell | Execution |
+| T1071.001 | Web Protocols | Command and Control |
+| T1110 | Brute Force | Credential Access |
+| T1204.002 | Malicious File | Execution |
+| T1566.001 | Spearphishing Attachment | Initial Access |
+
+**Recommendations** — ordered along the kill chain:
+
+- Isolate the affected host and review the delivery vector (email/attachment).
+- Terminate malicious processes and collect the full command line for analysis.
+- Remove the persistence mechanism (scheduled task/registry) and verify it does not recreate.
+- Review accounts and services running with elevated privileges and check for newly created admin accounts (events 4720, 4732).
+- Force password reset for affected accounts and review authentication logs.
+- Block the identified C2 domain/IP at the firewall and proxy.
+- Preserve evidence (memory, logs) before remediation for potential forensic analysis.
+- Document all response actions in the incident tracking system.
+
+<details>
+<summary><b>Show the full generated report</b></summary>
+
+(wklej tutaj cały raport)
+
+</details>
  
 ---
  
