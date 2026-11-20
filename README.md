@@ -1,4 +1,3 @@
-
 # SOC Report Generator
  
 A small Python CLI that turns raw **Wazuh / Sysmon alerts (JSON)** into a ready-to-read **incident report in Markdown** — with a timeline, affected hosts and users, extracted IOCs, MITRE ATT&CK mapping and response recommendations.
@@ -16,6 +15,7 @@ When several alerts fire for the same incident, an analyst usually has to:
 3. pull out the indicators (IPs, domains, files, hashes),
 4. look up what the MITRE technique IDs mean and which tactics they belong to,
 5. write recommendations and a severity rating.
+
 That's slow and easy to get inconsistent. This tool does the boring, mechanical part so the analyst can focus on the judgement calls.
  
 ---
@@ -84,11 +84,11 @@ The ATT&CK dataset is large (~40 MB), so it's not stored in the repo. Download `
  
 ```bash
 mkdir -p data
-curl -L -o data/enterprise-attack.json \
+curl -L --create-dirs -o data/enterprise-attack.json \
   https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack.json
 ```
  
-(On Windows you can simply download the file in the browser and save it as `data/enterprise-attack.json`.)
+(On Windows you can simply download the file in the browser and save it as `data/enterprise-attack.json` — create the `data` folder first.)
  
 ---
  
@@ -280,4 +280,3 @@ This is a learning project and I'm actively improving it. Next steps:
 ## License
  
 MIT
- 
